@@ -581,6 +581,7 @@ gimp_device_info_set_device (GimpDeviceInfo *info,
   gimp_object_name_changed (GIMP_OBJECT (info));
 
   g_object_notify (G_OBJECT (info), "device");
+  g_object_notify (G_OBJECT (info), "display");
 }
 
 void
@@ -891,17 +892,17 @@ gint
 gimp_device_info_compare (GimpDeviceInfo *a,
                           GimpDeviceInfo *b)
 {
-  GdkDeviceManager *manager;
+  GdkSeat *seat;
 
   if (a->device && a->display &&
-      (manager = gdk_display_get_device_manager (a->display)) &&
-      a->device == gdk_device_manager_get_client_pointer (manager))
+      (seat = gdk_display_get_default_seat (a->display)) &&
+      a->device == gdk_seat_get_pointer (seat))
     {
       return -1;
     }
   else if (b->device && b->display &&
-           (manager = gdk_display_get_device_manager (b->display)) &&
-           b->device == gdk_device_manager_get_client_pointer (manager))
+           (seat = gdk_display_get_default_seat (b->display)) &&
+           b->device == gdk_seat_get_pointer (seat))
     {
       return 1;
     }
